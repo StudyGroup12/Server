@@ -1,0 +1,49 @@
+# ==========================================
+# AI 도구 설정 파일 (GitHub 비공개)
+# ==========================================
+CLAUDE.md
+AGENTS.md
+rules/
+.cursor/
+.github/
+
+# ==========================================
+# 환경변수 / 민감 정보
+# ==========================================
+.env
+.env.local
+.env.*.local
+backend/src/main/resources/application-local.yml
+backend/src/main/resources/application-secret.yml
+
+# ==========================================
+# Backend (Spring Boot / Gradle)
+# ==========================================
+backend/build/
+backend/.gradle/
+backend/out/
+backend/*.jar
+backend/*.war
+backend/bin/
+backend/.idea/
+backend/*.iml
+backend/gradle/wrapper/gradle-wrapper.jar
+
+# ==========================================
+# Frontend (Node / Vite)
+# ==========================================
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+
+# ==========================================
+# OS / 에디터
+# ==========================================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+*.iml
+.vscode/
