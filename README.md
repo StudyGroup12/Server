@@ -25,8 +25,9 @@
 
 ## 시작하기 (GitHub Codespaces)
 
-1. 저장소 페이지에서 `Code` → `Codespaces` → `Create codespace on dev` 클릭
-2. Codespace가 열리면 터미널에서 아래 명령어 실행
+`Server 레포지토리 확인`
+~~1. 저장소 페이지에서 `Code` → `Codespaces` → `Create codespace on dev` 클릭~~
+~~2. Codespace가 열리면 터미널에서 아래 명령어 실행~~
 
 ```bash
 # Backend (포트 8080)
