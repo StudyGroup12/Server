@@ -1,17 +1,29 @@
 package com.studygroup.global.security;
 
+import com.studygroup.domain.auth.entity.Member;
+import com.studygroup.domain.auth.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-// auth 도메인 담당자가 구현
-// MemberRepository를 주입받아 userId로 Member를 조회하도록 작성
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
+
+    private final MemberRepository memberRepository;
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        throw new UnsupportedOperationException("auth 담당자가 구현해야 합니다.");
+        Member member = memberRepository.findById(Long.parseLong(userId))
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+        return User.builder()
+                .username(String.valueOf(member.getId()))
+                .password(member.getPassword())
+                .roles("USER")
+                .build();
     }
 }
