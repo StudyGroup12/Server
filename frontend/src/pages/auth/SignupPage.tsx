@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import { FormEvent, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import './Auth.css';
 
-const SignupPage: React.FC = () => {
+const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
   const { signup } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     signup({ email, password, nickname });
   };
 
@@ -19,40 +20,45 @@ const SignupPage: React.FC = () => {
         <h2>회원가입</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>이메일</label>
+            <label htmlFor="signup-email">이메일</label>
             <input
+              id="signup-email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(event) => setEmail(event.target.value)}
               required
               placeholder="email@example.com"
             />
           </div>
           <div className="form-group">
-            <label>비밀번호</label>
+            <label htmlFor="signup-password">비밀번호</label>
             <input
+              id="signup-password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(event) => setPassword(event.target.value)}
               required
               placeholder="8자 이상 입력하세요"
               minLength={8}
             />
           </div>
           <div className="form-group">
-            <label>닉네임</label>
+            <label htmlFor="signup-nickname">닉네임</label>
             <input
+              id="signup-nickname"
               type="text"
               value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
+              onChange={(event) => setNickname(event.target.value)}
               required
               placeholder="닉네임을 입력하세요"
             />
           </div>
-          <button type="submit" className="auth-button">회원가입</button>
+          <button type="submit" className="auth-button">
+            회원가입
+          </button>
         </form>
         <p className="auth-link">
-          이미 계정이 있으신가요? <a href="/login">로그인</a>
+          이미 계정이 있으신가요? <Link to="/login">로그인</Link>
         </p>
       </div>
     </div>

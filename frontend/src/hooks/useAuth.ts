@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { login, signup, getMyInfo } from '../api/auth.api';
-import { LoginRequest, SignupRequest } from '../types/auth.types';
 import { useNavigate } from 'react-router-dom';
+import { getMyInfo, login, signup } from '../api/auth.api';
+import { LoginRequest, SignupRequest } from '../types/auth.types';
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
@@ -14,7 +14,7 @@ export const useAuth = () => {
       navigate('/login');
     },
     onError: (error: any) => {
-      alert(error.response?.data?.error?.message || '회원가입 실패');
+      alert(error.response?.data?.error?.message || '회원가입에 실패했습니다.');
     },
   });
 
@@ -26,7 +26,7 @@ export const useAuth = () => {
       navigate('/');
     },
     onError: (error: any) => {
-      alert(error.response?.data?.error?.message || '로그인 실패');
+      alert(error.response?.data?.error?.message || '로그인에 실패했습니다.');
     },
   });
 

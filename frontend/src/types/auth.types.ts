@@ -9,14 +9,13 @@ export interface ApiResponse<T> {
 
 export interface SignupRequest {
   email: string;
-  password?: string; // Optional if needed, but usually required
+  password: string;
   nickname: string;
 }
 
-// Re-defining to match backend DTOs exactly
 export interface LoginRequest {
   email: string;
-  password?: string;
+  password: string;
 }
 
 export interface TokenResponse {
