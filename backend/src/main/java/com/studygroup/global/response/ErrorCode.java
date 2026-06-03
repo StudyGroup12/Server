@@ -16,6 +16,16 @@ public enum ErrorCode {
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH005", "이메일 또는 비밀번호가 올바르지 않습니다."),
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "AUTH006", "이미 사용 중인 이메일입니다."),
 
+    // Group
+    GROUP_NOT_FOUND(HttpStatus.NOT_FOUND, "GROUP001", "스터디 그룹을 찾을 수 없습니다."),
+    GROUP_FULL(HttpStatus.BAD_REQUEST, "GROUP002", "스터디 그룹의 정원이 초과되었습니다."),
+    NOT_GROUP_OWNER(HttpStatus.FORBIDDEN, "GROUP003", "스터디 그룹의 방장이 아닙니다."),
+
+    // Membership
+    MEMBERSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "MBR001", "가입 내역을 찾을 수 없습니다."),
+    ALREADY_MEMBER(HttpStatus.BAD_REQUEST, "MBR002", "이미 가입되었거나 신청 대기 중인 그룹입니다."),
+    NOT_MEMBER(HttpStatus.BAD_REQUEST, "MBR003", "그룹의 멤버가 아닙니다."),
+
     // Common
     NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON001", "요청한 리소스를 찾을 수 없습니다."),
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "COMMON002", "잘못된 입력입니다."),

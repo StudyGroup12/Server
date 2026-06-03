@@ -1,0 +1,106 @@
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { fetchGroupMembers, fetchPendingMembers, approveMembership, rejectMembership } from '../../api/membership.api';
+import { MemberSummary } from '../../types/membership.types';
+import './Membership.css';
+
+const MembershipPage: React.FC = () => {
+  const { groupId } = useParams<{ groupId: string }>();
+  const [members, setMembers] = useState<MemberSummary[]>([]);
+  const [pendingMembers, setPendingMembers] = useState<MemberSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadData = async () => {
+    if (!groupId) return;
+    try {
+      const [membersData, pendingData] = await Promise.all([
+        fetchGroupMembers(Number(groupId)),
+        fetchPendingMembers(Number(groupId)).catch(() => []), // 방장이 아니면 에러날 수 있으므로 빈 배열 처리
+      ]);
+      setMembers(membersData);
+      setPendingMembers(pendingData);
+    } catch (error) {
+      console.error('데이터를 불러오는데 실패했습니다.', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [groupId]);
+
+  const handleApprove = async (memberId: number) => {
+    if (!groupId) return;
+    try {
+      await approveMembership(Number(groupId), memberId);
+      alert('승인되었습니다.');
+      loadData();
+    } catch (error) {
+      alert('승인에 실패했습니다.');
+    }
+  };
+
+  const handleReject = async (memberId: number) => {
+    if (!groupId) return;
+    try {
+      await rejectMembership(Number(groupId), memberId);
+      alert('거절되었습니다.');
+      loadData();
+    } catch (error) {
+      alert('거절에 실패했습니다.');
+    }
+  };
+
+  if (loading) return <div>로딩 중...</div>;
+
+  return (
+    <div className="membership-page">
+      <div className="membership-header">
+        <h1>스터디 멤버 관리</h1>
+        <Link to={`/groups/${groupId}`} className="button">
+          돌아가기
+        </Link>
+      </div>
+      
+      {pendingMembers.length > 0 ? (
+        <section className="member-list-section">
+          <h2>가입 신청 대기</h2>
+          <ul className="member-list">
+            {pendingMembers.map((member) => (
+              <li key={member.memberId} className="member-item">
+                <span className="member-info">
+                  <strong>{member.nickname}</strong> ({member.email})
+                </span>
+                <div className="action-buttons">
+                  <button className="approve-btn" onClick={() => handleApprove(member.memberId)}>승인</button>
+                  <button className="reject-btn" onClick={() => handleReject(member.memberId)}>거절</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : (
+        <section className="member-list-section">
+          <h2>가입 신청 대기</h2>
+          <p className="empty-msg">새로운 가입 신청이 없습니다.</p>
+        </section>
+      )}
+
+      <section className="member-list-section">
+        <h2>현재 멤버</h2>
+        <ul className="member-list">
+          {members.map((member) => (
+            <li key={member.memberId} className="member-item">
+              <span className="member-info">
+                <strong>{member.nickname}</strong> ({member.email}) - {member.role}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  );
+};
+
+export default MembershipPage;

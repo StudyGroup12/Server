@@ -66,4 +66,18 @@ public class StudyGroup extends BaseEntity {
     public boolean isOwnedBy(Long memberId) {
         return this.ownerId.equals(memberId);
     }
+
+    public void increaseMemberCount() {
+        if (this.currentMemberCount >= this.maxMemberCount) {
+            throw new IllegalStateException("그룹 정원이 가득 찼습니다.");
+        }
+        this.currentMemberCount++;
+    }
+
+    public void decreaseMemberCount() {
+        if (this.currentMemberCount <= 1) {
+            throw new IllegalStateException("멤버 수는 1명 미만일 수 없습니다.");
+        }
+        this.currentMemberCount--;
+    }
 }

@@ -6,6 +6,10 @@ import com.studygroup.domain.group.dto.GroupSummaryResponse;
 import com.studygroup.domain.group.dto.UpdateGroupRequest;
 import com.studygroup.domain.group.entity.StudyGroup;
 import com.studygroup.domain.group.repository.StudyGroupRepository;
+import com.studygroup.domain.membership.entity.Membership;
+import com.studygroup.domain.membership.entity.MembershipRole;
+import com.studygroup.domain.membership.entity.MembershipStatus;
+import com.studygroup.domain.membership.repository.MembershipRepository;
 import com.studygroup.global.exception.CustomException;
 import com.studygroup.global.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +25,7 @@ import org.springframework.util.StringUtils;
 public class StudyGroupService {
 
     private final StudyGroupRepository studyGroupRepository;
+    private final MembershipRepository membershipRepository;
 
     public Page<GroupSummaryResponse> findGroups(String keyword, Pageable pageable) {
         Page<StudyGroup> groups = StringUtils.hasText(keyword)
@@ -44,7 +49,17 @@ public class StudyGroupService {
                 .ownerId(ownerId)
                 .build();
 
-        return GroupDetailResponse.from(studyGroupRepository.save(group));
+        StudyGroup savedGroup = studyGroupRepository.save(group);
+
+        Membership membership = Membership.builder()
+                .groupId(savedGroup.getId())
+                .memberId(ownerId)
+                .status(MembershipStatus.ACCEPTED)
+                .role(MembershipRole.OWNER)
+                .build();
+        membershipRepository.save(membership);
+
+        return GroupDetailResponse.from(savedGroup);
     }
 
     @Transactional
@@ -72,7 +87,7 @@ public class StudyGroupService {
 
     private StudyGroup getGroup(Long groupId) {
         return studyGroupRepository.findById(groupId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
     }
 
     private void validateOwner(StudyGroup group, Long memberId) {

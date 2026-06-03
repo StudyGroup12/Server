@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { deleteGroup, fetchGroupDetail } from '../../api/group.api';
+import { applyMembership, fetchMyMembership } from '../../api/membership.api';
 import { useAuth } from '../../hooks/useAuth';
 import './Group.css';
 
@@ -18,6 +19,23 @@ const GroupDetailPage = () => {
     enabled: hasToken && Number.isFinite(numericGroupId),
   });
 
+  const { data: myMembership } = useQuery({
+    queryKey: ['my-membership', numericGroupId],
+    queryFn: () => fetchMyMembership(numericGroupId),
+    enabled: hasToken && Number.isFinite(numericGroupId),
+  });
+
+  const applyMutation = useMutation({
+    mutationFn: () => applyMembership(numericGroupId),
+    onSuccess: () => {
+      alert('가입 신청이 완료되었습니다.');
+      queryClient.invalidateQueries({ queryKey: ['my-membership', numericGroupId] });
+    },
+    onError: (error: any) => {
+      alert(error.response?.data?.error?.message || '가입 신청에 실패했습니다.');
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: () => deleteGroup(numericGroupId),
     onSuccess: () => {
@@ -31,10 +49,18 @@ const GroupDetailPage = () => {
 
   const group = data?.data;
   const isOwner = !!user && !!group && user.id === group.ownerId;
+  const isPending = myMembership?.status === 'PENDING';
+  const isAccepted = myMembership?.status === 'ACCEPTED';
 
   const handleDelete = () => {
     if (window.confirm('이 그룹을 삭제할까요?')) {
       deleteMutation.mutate();
+    }
+  };
+
+  const handleApply = () => {
+    if (window.confirm('이 스터디 그룹에 가입 신청을 하시겠습니까?')) {
+      applyMutation.mutate();
     }
   };
 
@@ -71,8 +97,11 @@ const GroupDetailPage = () => {
           <Link to="/groups" className="button">
             목록
           </Link>
-          {isOwner && (
+          {isOwner ? (
             <>
+              <Link to={`/groups/${group.id}/members`} className="button">
+                멤버 관리
+              </Link>
               <Link to={`/groups/${group.id}/edit`} className="button button-primary">
                 수정
               </Link>
@@ -84,6 +113,21 @@ const GroupDetailPage = () => {
               >
                 삭제
               </button>
+            </>
+          ) : (
+            <>
+              {isPending && <button className="button" disabled>승인 대기 중</button>}
+              {isAccepted && <button className="button" disabled>참여 중</button>}
+              {!myMembership && (
+                <button
+                  type="button"
+                  className="button button-primary"
+                  onClick={handleApply}
+                  disabled={applyMutation.isPending}
+                >
+                  가입 신청
+                </button>
+              )}
             </>
           )}
         </div>
