@@ -8,6 +8,11 @@ import MembershipPage from './pages/membership/MembershipPage';
 import BoardListPage from './pages/board/BoardListPage';
 import BoardDetailPage from './pages/board/BoardDetailPage';
 import BoardFormPage from './pages/board/BoardFormPage';
+import ScheduleListPage from './pages/schedule/ScheduleListPage';
+import ScheduleDetailPage from './pages/schedule/ScheduleDetailPage';
+import ScheduleFormPage from './pages/schedule/ScheduleFormPage';
+import NotificationPage from './pages/notification/NotificationPage';
+import NotificationBell from './components/NotificationBell';
 import { useAuth } from './hooks/useAuth';
 import './App.css';
 
@@ -27,6 +32,7 @@ function App() {
             </Link>
             {user ? (
               <>
+                <NotificationBell />
                 <span className="user-nickname">{user.nickname}님</span>
                 <button onClick={logout} className="logout-btn" type="button">
                   로그아웃
@@ -76,6 +82,11 @@ function App() {
           <Route path="/groups/:groupId/boards/new" element={<BoardFormPage />} />
           <Route path="/groups/:groupId/boards/:boardId" element={<BoardDetailPage />} />
           <Route path="/groups/:groupId/boards/:boardId/edit" element={<BoardFormPage />} />
+          <Route path="/groups/:groupId/schedules" element={<ScheduleListPage />} />
+          <Route path="/groups/:groupId/schedules/new" element={<ScheduleFormPage />} />
+          <Route path="/groups/:groupId/schedules/:scheduleId" element={<ScheduleDetailPage />} />
+          <Route path="/groups/:groupId/schedules/:scheduleId/edit" element={<ScheduleFormPage />} />
+          <Route path="/notifications" element={<NotificationPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
         </Routes>
