@@ -1,0 +1,65 @@
+.membership-page {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.membership-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.member-list-section {
+  margin-top: 30px;
+}
+
+.member-list {
+  list-style: none;
+  padding: 0;
+}
+
+.member-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.member-info {
+  flex: 1;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.approve-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reject-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.approve-btn:hover { background-color: #218838; }
+.reject-btn:hover { background-color: #c82333; }
+
+.empty-msg {
+  color: #666;
+  font-style: italic;
+  padding: 10px 0;
+}
