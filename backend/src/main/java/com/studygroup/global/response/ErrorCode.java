@@ -49,7 +49,11 @@ public enum ErrorCode {
 
     // Notification
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NTF001", "알림을 찾을 수 없습니다."),
-    NOTIFICATION_FORBIDDEN(HttpStatus.FORBIDDEN, "NTF002", "본인 알림만 처리할 수 있습니다.");
+    NOTIFICATION_FORBIDDEN(HttpStatus.FORBIDDEN, "NTF002", "본인 알림만 처리할 수 있습니다."),
+
+    // Todo
+    TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "TODO001", "할일을 찾을 수 없습니다."),
+    NOT_TODO_OWNER(HttpStatus.FORBIDDEN, "TODO002", "할일을 수정할 권한이 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
