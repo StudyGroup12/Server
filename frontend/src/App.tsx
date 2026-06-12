@@ -12,6 +12,10 @@ import BoardFormPage from './pages/board/BoardFormPage';
 import ScheduleListPage from './pages/schedule/ScheduleListPage';
 import ScheduleDetailPage from './pages/schedule/ScheduleDetailPage';
 import ScheduleFormPage from './pages/schedule/ScheduleFormPage';
+import TodoListPage from './pages/todo/TodoListPage';
+import TodoFormPage from './pages/todo/TodoFormPage';
+import PersonalTodoListPage from './pages/todo/PersonalTodoListPage';
+import PersonalTodoFormPage from './pages/todo/PersonalTodoFormPage';
 import NotificationPage from './pages/notification/NotificationPage';
 import NotificationBell from './components/NotificationBell';
 import { useAuth } from './hooks/useAuth';
@@ -35,6 +39,9 @@ function App() {
             StudyMate
           </Link>
           <div className="nav-links">
+            <Link to="/todos" className="nav-link">
+              내 할일
+            </Link>
             <Link to="/groups" className="nav-link">
               스터디 그룹
             </Link>
@@ -76,6 +83,12 @@ function App() {
           <Route path="/groups/:groupId/schedules/new" element={<ScheduleFormPage />} />
           <Route path="/groups/:groupId/schedules/:scheduleId" element={<ScheduleDetailPage />} />
           <Route path="/groups/:groupId/schedules/:scheduleId/edit" element={<ScheduleFormPage />} />
+          <Route path="/groups/:groupId/todos" element={<TodoListPage />} />
+          <Route path="/groups/:groupId/todos/new" element={<TodoFormPage />} />
+          <Route path="/groups/:groupId/todos/:todoId/edit" element={<TodoFormPage />} />
+          <Route path="/todos" element={<PersonalTodoListPage />} />
+          <Route path="/todos/new" element={<PersonalTodoFormPage />} />
+          <Route path="/todos/:todoId/edit" element={<PersonalTodoFormPage />} />
           <Route path="/notifications" element={<NotificationPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />

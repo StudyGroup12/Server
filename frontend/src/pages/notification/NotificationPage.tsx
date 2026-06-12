@@ -36,9 +36,7 @@ const NotificationPage = () => {
 
   const handleClick = (n: Notification) => {
     if (!n.read) markRead.mutate(n.id);
-    if (n.type !== 'SCHEDULE_DELETED') {
-      navigate(`/groups/${n.groupId}/schedules/${n.scheduleId}`);
-    }
+    if (n.link) navigate(n.link);
   };
 
   return (
@@ -68,12 +66,13 @@ const NotificationPage = () => {
           {items.map((n) => (
             <li
               key={n.id}
-              className={`notification-item ${n.read ? '' : 'unread'}`}
+              className={`notification-item ${n.read ? '' : 'unread'} ${n.link ? '' : 'is-static'}`}
               onClick={() => handleClick(n)}
             >
               <span className={`notification-group-badge ${n.type}`}>{n.groupName}</span>
               <span className="notification-divider">|</span>
               <span className="notification-message">{n.message}</span>
+              {!n.link && <span className="notification-target-empty">대상 없음</span>}
             </li>
           ))}
         </ul>

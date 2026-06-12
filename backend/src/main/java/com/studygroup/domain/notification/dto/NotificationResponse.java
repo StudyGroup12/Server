@@ -1,7 +1,7 @@
-package com.studygroup.domain.schedule.dto;
+package com.studygroup.domain.notification.dto;
 
-import com.studygroup.domain.schedule.entity.Notification;
-import com.studygroup.domain.schedule.entity.NotificationType;
+import com.studygroup.domain.notification.entity.Notification;
+import com.studygroup.domain.notification.entity.NotificationType;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +9,7 @@ public record NotificationResponse(
         Long id,
         Long groupId,
         String groupName,
-        Long scheduleId,
+        String link,
         NotificationType type,
         String message,
         boolean read,
@@ -20,7 +20,7 @@ public record NotificationResponse(
                 n.getId(),
                 n.getGroupId(),
                 groupName,
-                n.getScheduleId(),
+                n.getLink(),
                 n.getType(),
                 n.getMessage(),
                 n.isRead(),

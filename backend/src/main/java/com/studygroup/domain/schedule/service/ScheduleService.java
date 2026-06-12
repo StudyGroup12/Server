@@ -7,6 +7,8 @@ import com.studygroup.domain.group.repository.StudyGroupRepository;
 import com.studygroup.domain.membership.entity.Membership;
 import com.studygroup.domain.membership.entity.MembershipStatus;
 import com.studygroup.domain.membership.repository.MembershipRepository;
+import com.studygroup.domain.notification.entity.NotificationType;
+import com.studygroup.domain.notification.service.NotificationService;
 import com.studygroup.domain.schedule.dto.AttendanceSummaryResponse;
 import com.studygroup.domain.schedule.dto.CreateScheduleRequest;
 import com.studygroup.domain.schedule.dto.ScheduleDetailResponse;
@@ -14,7 +16,6 @@ import com.studygroup.domain.schedule.dto.ScheduleSummaryResponse;
 import com.studygroup.domain.schedule.dto.UpdateScheduleRequest;
 import com.studygroup.domain.schedule.entity.Attendance;
 import com.studygroup.domain.schedule.entity.AttendanceStatus;
-import com.studygroup.domain.schedule.entity.NotificationType;
 import com.studygroup.domain.schedule.entity.Schedule;
 import com.studygroup.domain.schedule.repository.AttendanceRepository;
 import com.studygroup.domain.schedule.repository.ScheduleRepository;
@@ -30,7 +31,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,11 +63,12 @@ public class ScheduleService {
                 .build();
         Schedule saved = scheduleRepository.save(schedule);
 
-        notificationService.notifyGroupMembers(
-                saved,
+        notificationService.notifyGroup(
+                saved.getGroupId(),
                 NotificationType.SCHEDULE_CREATED,
                 memberId,
-                "일정이 등록되었습니다."
+                "일정이 등록되었습니다.",
+                scheduleLink(saved)
         );
 
         return toDetailResponse(saved, memberId);
@@ -118,11 +119,12 @@ public class ScheduleService {
                 request.getEndAt()
         );
 
-        notificationService.notifyGroupMembers(
-                schedule,
+        notificationService.notifyGroup(
+                schedule.getGroupId(),
                 NotificationType.SCHEDULE_UPDATED,
                 memberId,
-                "일정이 변경되었습니다."
+                "일정이 변경되었습니다.",
+                scheduleLink(schedule)
         );
 
         return toDetailResponse(schedule, memberId);
@@ -134,20 +136,45 @@ public class ScheduleService {
         Schedule schedule = getSchedule(scheduleId, groupId);
         ensureAuthorOrOwner(schedule, groupId, memberId);
 
-        // 알림은 삭제 전에 발송 (제목을 메시지에 남겨서 수신자가 어떤 일정이었는지 식별 가능)
-        notificationService.notifyGroupMembers(
-                schedule,
+        // 삭제된 일정은 이동 대상이 없으므로 link는 null. 제목을 메시지에 남겨 식별 가능하게 함.
+        notificationService.notifyGroup(
+                schedule.getGroupId(),
                 NotificationType.SCHEDULE_DELETED,
                 memberId,
-                "일정이 삭제되었습니다: " + schedule.getTitle()
+                "일정이 삭제되었습니다: " + schedule.getTitle(),
+                null
         );
 
         attendanceRepository.deleteByScheduleId(scheduleId);
-        notificationService.deleteByScheduleId(scheduleId);
         scheduleRepository.delete(schedule);
     }
 
+    /**
+     * 스케줄러용: 시작 30분 전 ± 1분 윈도우에 들어온 일정에 리마인더 발송.
+     * reminderSentAt이 null인 것만 대상으로 중복 발송 방지.
+     */
+    @Transactional
+    public void sendDueReminders() {
+        LocalDateTime now = LocalDateTime.now();
+        List<Schedule> due = scheduleRepository
+                .findByReminderSentAtIsNullAndStartAtBetween(now.plusMinutes(29), now.plusMinutes(31));
+        for (Schedule s : due) {
+            notificationService.notifyGroup(
+                    s.getGroupId(),
+                    NotificationType.SCHEDULE_REMINDER,
+                    null,
+                    "곧 시작될 일정이 있습니다.",
+                    scheduleLink(s)
+            );
+            s.markReminderSent(now);
+        }
+    }
+
     // --- 내부 헬퍼 ---
+
+    private String scheduleLink(Schedule schedule) {
+        return "/groups/" + schedule.getGroupId() + "/schedules/" + schedule.getId();
+    }
 
     private Schedule getSchedule(Long scheduleId, Long groupId) {
         Schedule schedule = scheduleRepository.findById(scheduleId)

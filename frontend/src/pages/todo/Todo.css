@@ -1,0 +1,280 @@
+/* ============================================================
+   할일 (목록/폼) — 기존 게시판/일정 화면 톤에 맞춤
+   ============================================================ */
+
+.todo-page {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.todo-page--narrow {
+  max-width: 760px;
+}
+
+.todo-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.todo-title-block h1 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.5vw, 2rem);
+  font-weight: 700;
+}
+
+.todo-title-block p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.todo-toolbar-actions,
+.todo-row-actions,
+.todo-form-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.todo-progress-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 260px);
+  align-items: center;
+  gap: 20px;
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
+}
+
+.todo-progress-label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.todo-progress-card strong {
+  display: block;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.todo-progress-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.todo-progress-track {
+  height: 12px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--stroke);
+}
+
+.todo-progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gradient);
+  transition: width 0.2s ease;
+}
+
+.todo-filter-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.todo-filter-toggle {
+  display: inline-flex;
+  border: 1.5px solid var(--stroke);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.todo-filter-toggle button {
+  border: 0;
+  background: transparent;
+  padding: 8px 16px;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.todo-filter-toggle button.active {
+  background: var(--gradient);
+  color: #fff;
+}
+
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.todo-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
+}
+
+.todo-row:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: rgba(79, 107, 237, 0.3);
+}
+
+.todo-row.is-completed {
+  background: var(--surface-2);
+}
+
+.todo-check {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.todo-check input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.todo-check span {
+  width: 22px;
+  height: 22px;
+  box-sizing: border-box;
+  border: 2px solid var(--stroke);
+  border-radius: 7px;
+  background: var(--surface);
+  transition: background 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+
+.todo-check input:checked + span {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 4px var(--surface);
+}
+
+.todo-check input:disabled + span {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.todo-row-content h2 {
+  margin: 0 0 6px;
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.todo-row.is-completed .todo-row-content h2 {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.todo-row-content p {
+  margin: 0 0 10px;
+  color: var(--text);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.todo-row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.todo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+}
+
+.todo-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.todo-form-field span {
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.todo-form-field input,
+.todo-form-field textarea {
+  border: 1.5px solid var(--stroke);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-family: var(--font-body);
+  resize: vertical;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.todo-form-field input:focus,
+.todo-form-field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.todo-form-actions {
+  justify-content: flex-end;
+}
+
+@media (max-width: 720px) {
+  .todo-progress-card,
+  .todo-row {
+    grid-template-columns: 1fr;
+  }
+
+  .todo-row-actions {
+    justify-content: flex-end;
+  }
+
+  .todo-filter-row {
+    justify-content: flex-start;
+  }
+}
