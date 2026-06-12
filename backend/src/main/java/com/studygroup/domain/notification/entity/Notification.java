@@ -1,4 +1,4 @@
-package com.studygroup.domain.schedule.entity;
+package com.studygroup.domain.notification.entity;
 
 import com.studygroup.global.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -22,8 +22,7 @@ import java.time.LocalDateTime;
 @Table(
         name = "notifications",
         indexes = {
-                @Index(name = "idx_notifications_recipient", columnList = "recipientId,readAt"),
-                @Index(name = "idx_notifications_schedule", columnList = "scheduleId")
+                @Index(name = "idx_notifications_recipient", columnList = "recipientId,readAt")
         }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,10 +38,6 @@ public class Notification extends BaseEntity {
     @Column(nullable = false)
     private Long groupId;
 
-    /** 알림 종류에 따라 nullable (예: SCHEDULE_DELETED 후 scheduleId는 더 이상 유효 X 일 수 있지만 참조용으로 보관). */
-    @Column(nullable = false)
-    private Long scheduleId;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private NotificationType type;
@@ -50,16 +45,20 @@ public class Notification extends BaseEntity {
     @Column(nullable = false, length = 300)
     private String message;
 
+    /** 클릭 시 이동할 상대 경로. null이면 이동 대상 없음(예: 삭제된 일정). */
+    @Column(length = 300)
+    private String link;
+
     /** null이면 안 읽음. */
     private LocalDateTime readAt;
 
     @Builder
-    public Notification(Long recipientId, Long groupId, Long scheduleId, NotificationType type, String message) {
+    public Notification(Long recipientId, Long groupId, NotificationType type, String message, String link) {
         this.recipientId = recipientId;
         this.groupId = groupId;
-        this.scheduleId = scheduleId;
         this.type = type;
         this.message = message;
+        this.link = link;
     }
 
     public boolean isRead() {

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ScheduleReminderScheduler {
 
-    private final NotificationService notificationService;
+    private final ScheduleService scheduleService;
 
     /**
      * 1분마다 실행. 시작 30분 전 ± 1분 윈도우에 들어온 일정에 대해 리마인더 알림 발송.
@@ -19,7 +19,7 @@ public class ScheduleReminderScheduler {
     @Scheduled(fixedRate = 60_000L)
     public void runReminderJob() {
         try {
-            notificationService.sendDueReminders();
+            scheduleService.sendDueReminders();
         } catch (Exception e) {
             // 스케줄러 내부 예외는 다음 실행에 영향 가지 않도록 swallow
             log.warn("schedule reminder job failed", e);

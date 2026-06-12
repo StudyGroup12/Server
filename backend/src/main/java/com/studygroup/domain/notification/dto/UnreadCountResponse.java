@@ -1,4 +1,4 @@
-package com.studygroup.domain.schedule.dto;
+package com.studygroup.domain.notification.dto;
 
 public record UnreadCountResponse(long unreadCount) {
 }

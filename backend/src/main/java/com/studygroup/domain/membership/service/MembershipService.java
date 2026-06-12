@@ -10,6 +10,8 @@ import com.studygroup.domain.membership.entity.Membership;
 import com.studygroup.domain.membership.entity.MembershipRole;
 import com.studygroup.domain.membership.entity.MembershipStatus;
 import com.studygroup.domain.membership.repository.MembershipRepository;
+import com.studygroup.domain.notification.entity.NotificationType;
+import com.studygroup.domain.notification.service.NotificationService;
 import com.studygroup.global.exception.CustomException;
 import com.studygroup.global.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class MembershipService {
     private final MembershipRepository membershipRepository;
     private final StudyGroupRepository studyGroupRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public MembershipResponse apply(Long groupId, Long memberId) {
@@ -47,8 +50,20 @@ public class MembershipService {
                 .status(MembershipStatus.PENDING)
                 .role(MembershipRole.MEMBER)
                 .build();
+        Membership saved = membershipRepository.save(membership);
 
-        return new MembershipResponse(membershipRepository.save(membership));
+        String applicantName = memberRepository.findById(memberId)
+                .map(Member::getNickname)
+                .orElse("어떤 사용자");
+        notificationService.notify(
+                group.getOwnerId(),
+                groupId,
+                NotificationType.MEMBERSHIP_REQUESTED,
+                applicantName + "님이 가입을 신청했습니다.",
+                "/groups/" + groupId + "/members"
+        );
+
+        return new MembershipResponse(saved);
     }
 
     @Transactional
@@ -73,6 +88,14 @@ public class MembershipService {
 
         membership.accept();
         group.increaseMemberCount();
+
+        notificationService.notify(
+                targetMemberId,
+                groupId,
+                NotificationType.MEMBERSHIP_APPROVED,
+                "가입 신청이 승인되었습니다.",
+                "/groups/" + groupId
+        );
     }
 
     @Transactional
@@ -88,6 +111,14 @@ public class MembershipService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBERSHIP_NOT_FOUND));
 
         membership.reject();
+
+        notificationService.notify(
+                targetMemberId,
+                groupId,
+                NotificationType.MEMBERSHIP_REJECTED,
+                "가입 신청이 거절되었습니다.",
+                "/groups"
+        );
     }
 
     public List<MemberSummaryResponse> getMembers(Long groupId) {

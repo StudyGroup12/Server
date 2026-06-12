@@ -13,6 +13,8 @@ import com.studygroup.domain.group.repository.StudyGroupRepository;
 import com.studygroup.domain.membership.entity.Membership;
 import com.studygroup.domain.membership.entity.MembershipStatus;
 import com.studygroup.domain.membership.repository.MembershipRepository;
+import com.studygroup.domain.notification.entity.NotificationType;
+import com.studygroup.domain.notification.service.NotificationService;
 import com.studygroup.global.exception.CustomException;
 import com.studygroup.global.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +35,12 @@ public class CommentService {
     private final MembershipRepository membershipRepository;
     private final StudyGroupRepository studyGroupRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public CommentResponse createComment(Long groupId, Long boardId, CreateCommentRequest request, Long memberId) {
         validateMember(groupId, memberId);
-        validateBoard(boardId, groupId);
+        Board board = validateBoard(boardId, groupId);
 
         Comment comment = Comment.builder()
                 .boardId(boardId)
@@ -46,7 +49,19 @@ public class CommentService {
                 .build();
         Comment saved = commentRepository.save(comment);
 
-        return CommentResponse.of(saved, getNickname(memberId));
+        String nickname = getNickname(memberId);
+        // 내 글에 내가 단 댓글은 알리지 않음
+        if (!board.isAuthor(memberId)) {
+            notificationService.notify(
+                    board.getAuthorId(),
+                    groupId,
+                    NotificationType.COMMENT_CREATED,
+                    nickname + "님이 회원님의 게시글에 댓글을 남겼습니다.",
+                    "/groups/" + groupId + "/boards/" + boardId
+            );
+        }
+
+        return CommentResponse.of(saved, nickname);
     }
 
     public List<CommentResponse> getComments(Long groupId, Long boardId, Long memberId) {
@@ -85,12 +100,13 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
-    private void validateBoard(Long boardId, Long groupId) {
+    private Board validateBoard(Long boardId, Long groupId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
         if (!board.getGroupId().equals(groupId)) {
             throw new CustomException(ErrorCode.BOARD_NOT_FOUND);
         }
+        return board;
     }
 
     private void validateMember(Long groupId, Long memberId) {

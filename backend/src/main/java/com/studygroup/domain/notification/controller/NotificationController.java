@@ -1,8 +1,8 @@
-package com.studygroup.domain.schedule.controller;
+package com.studygroup.domain.notification.controller;
 
-import com.studygroup.domain.schedule.dto.NotificationResponse;
-import com.studygroup.domain.schedule.dto.UnreadCountResponse;
-import com.studygroup.domain.schedule.service.NotificationService;
+import com.studygroup.domain.notification.dto.NotificationResponse;
+import com.studygroup.domain.notification.dto.UnreadCountResponse;
+import com.studygroup.domain.notification.service.NotificationService;
 import com.studygroup.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
