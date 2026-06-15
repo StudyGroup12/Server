@@ -8,11 +8,13 @@ const NotificationBell = () => {
 
   return (
     <Link to="/notifications" className="nav-bell" aria-label="알림">
-      <span className="nav-bell-icon">🔔</span>
-      <span className="nav-bell-text">알림</span>
+      <div className="nav-bell-wrapper">
+        <span className="nav-bell-icon">🔔</span>
+      </div>
       {count > 0 && (
         <span className="nav-bell-badge">{count > 99 ? '99+' : count}</span>
       )}
+      <span className="nav-bell-text">알림</span>
     </Link>
   );
 };
