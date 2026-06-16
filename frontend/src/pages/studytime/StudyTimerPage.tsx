@@ -27,21 +27,23 @@ const StudyTimerPage = () => {
 
   const status = statusQuery.data?.data;
   const running = status?.running ?? false;
-  const startedAt = status?.startedAt ?? null;
+  const baseElapsed = status?.elapsedSeconds ?? 0;
 
-  // 진행 중이면 1초마다 경과 시간 갱신
+  // 서버가 내려준 경과 초를 기준점으로, 클라이언트는 상대 시간만 더해 카운트한다.
+  // (절대 시각을 파싱하지 않으므로 서버-브라우저 타임존 차이의 영향을 받지 않음)
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   useEffect(() => {
-    if (!running || !startedAt) {
+    if (!running) {
       setElapsedSeconds(0);
       return;
     }
-    const startMs = new Date(startedAt).getTime();
-    const tick = () => setElapsedSeconds(Math.floor((Date.now() - startMs) / 1000));
+    const startedTickMs = Date.now();
+    const tick = () =>
+      setElapsedSeconds(baseElapsed + Math.floor((Date.now() - startedTickMs) / 1000));
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [running, startedAt]);
+  }, [running, baseElapsed]);
 
   if (!hasToken) {
     return <div className="study-empty">로그인 후 학습 타이머를 이용할 수 있습니다.</div>;

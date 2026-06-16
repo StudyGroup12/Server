@@ -1,6 +1,7 @@
 export interface StudyTimerStatus {
   running: boolean;
   startedAt: string | null;
+  elapsedSeconds: number;
   todayMinutes: number;
   weekMinutes: number;
   totalMinutes: number;

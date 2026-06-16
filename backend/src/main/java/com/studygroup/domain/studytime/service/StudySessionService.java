@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
@@ -77,7 +78,12 @@ public class StudySessionService {
                 .mapToLong(StudySession::getDurationMinutes)
                 .sum();
 
-        return StudyTimerStatusResponse.of(running, todayMinutes, weekMinutes, totalMinutes);
+        // 경과 초는 서버에서 계산해 내려준다 (클라이언트의 타임존 파싱 오차 방지)
+        long elapsedSeconds = running == null
+                ? 0
+                : Math.max(0, Duration.between(running.getStartedAt(), LocalDateTime.now()).getSeconds());
+
+        return StudyTimerStatusResponse.of(running, elapsedSeconds, todayMinutes, weekMinutes, totalMinutes);
     }
 
     private long sumMinutesSince(List<StudySession> sessions, LocalDateTime since) {
